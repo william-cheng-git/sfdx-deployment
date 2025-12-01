@@ -1,0 +1,14 @@
+name: Core Deployment Logic
+on:
+  workflow_call:
+    inputs:
+      branch_name:
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy
+        run: echo "Deploying"
