@@ -18,17 +18,7 @@ on:
           - RunAllTestsInOrg
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
-    environment: Prod
-
-    # 2. Branch Selection and Conditional Run
-    # This prevents the workflow from continuing if the selected branch doesn't exist
-    # and ensures the checkout step uses the manually selected branch.
-    steps:
-      - name: 💾 Install Salesforce CLI and Plugins
-        run: |
-          npm install -g @salesforce/cli
-          # Install the sfdx-git-delta plugin
-          echo "y" | sf plugins install sfdx-git-delta
+  trigger_deploy:
+      uses: <ORG_NAME>/<OPS_REPO_NAME>/.github/workflows/deployment-logic.yml@main
+      with:
+        branch_name: ${{ github.ref_name }}
