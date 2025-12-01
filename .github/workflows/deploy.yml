@@ -1,0 +1,18 @@
+# deployment-logic.yml in the ops-repo/.github/workflows/
+name: Standard Deployment Logic
+on:
+  workflow_call:
+    inputs:
+      branch_name:
+        required: true
+        type: string
+    secrets:
+      SF_CONSUMER_KEY:
+        required: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # ... Deployment steps using inputs.branch_name and secrets.SF_CONSUMER_KEY ...
+      - name: Deploy
+        run: echo "Deploying branch ${{ inputs.branch_name }} with secret ${{ secrets.SF_CONSUMER_KEY }}"
