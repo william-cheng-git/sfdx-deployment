@@ -16,3 +16,11 @@ on:
           - NoTestRun
           - RunLocalTests
           - RunAllTestsInOrg
+
+jobs:
+  dummy:
+    runs-on: ubuntu-latest
+      steps:
+        - name: Echo
+        run: |
+          echo "Well"
