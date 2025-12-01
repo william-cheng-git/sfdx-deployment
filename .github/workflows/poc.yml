@@ -27,17 +27,6 @@ jobs:
     # This prevents the workflow from continuing if the selected branch doesn't exist
     # and ensures the checkout step uses the manually selected branch.
     steps:
-      - name: ⚙️ Checkout specified branch
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          ref: main
-
-      - name: 📦 Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "24" # Use a recent stable Node.js version
-
       - name: 💾 Install Salesforce CLI and Plugins
         run: |
           npm install -g @salesforce/cli
