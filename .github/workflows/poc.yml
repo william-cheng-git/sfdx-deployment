@@ -19,6 +19,6 @@ on:
 
 jobs:
   trigger_deploy:
-      uses: .github/workflows/poc-core.yml@main
+      uses: ./.github/workflows/poc-core.yml@main
       with:
         branch_name: ${{ github.ref_name }}
