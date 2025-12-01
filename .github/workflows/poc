@@ -1,0 +1,18 @@
+name: 🚀 Manual Salesforce Deployment
+
+# 1. Manual Trigger Configuration
+on:
+  workflow_dispatch:
+    inputs:
+      target_org_alias:
+        description: "Salesforce target org alias (e.g., SandboxName)"
+        required: true
+        default: "dev"
+      test_level:
+        description: "Deployment Test Level"
+        required: true
+        type: choice
+        options:
+          - NoTestRun
+          - RunLocalTests
+          - RunAllTestsInOrg
