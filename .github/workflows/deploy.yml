@@ -78,7 +78,7 @@ jobs:
       - name: ✨ Deploy Delta Metadata
         run: |
           sf project deploy start \
-            -x "${{ github.event.inputs.SGD_PACKAGE_DIR }}/package/package.xml" \
+            -x "${{ inputs.SGD_PACKAGE_DIR }}/package/package.xml" \
             --post-destructive-changes "${{ inputs.SGD_PACKAGE_DIR }}/destructiveChanges/destructiveChanges.xml" \
             --target-org deployment-target \
             --test-level ${{ github.event.inputs.TEST_LEVEL }} \
