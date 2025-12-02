@@ -11,19 +11,18 @@ on:
         description: "Deployment Test Level"
         required: true
         type: string
-      sgd_package_dir:
-        description: "SFDX git delta generated package directory"
-        required: true
-        default: "package"
-        type: string
       sf_username:
         description: "Salesforce username"
         required: true
-        default: ""
-        type: string      
+        type: string
+      sgd_package_dir:
+        description: "SFDX git delta generated package directory"
+        required: false
+        default: "package"
+        type: string
       sf_login_url:
         description: "Salesforce Login URL"
-        required: true
+        required: false
         default: "https://login.salesforce.com"
         type: string
 
