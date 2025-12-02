@@ -28,6 +28,10 @@ on:
     secrets:
       SF_SERVER_KEY:
         description: OAuth Private key
+        required: true
+      SF_CONSUMER_KEY:
+        description: OAuth Consumer Key
+        required: true
 
 jobs:
   deploy:
