@@ -67,7 +67,7 @@ jobs:
           # Create the output directory before running the delta command
           mkdir "${{ inputs.SGD_PACKAGE_DIR }}"
 
-          sf sgd source delta --from HEAD --to HEAD~1 --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
+          sf sgd source delta --from HEAD~1 --to HEAD --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
           echo "--- START METADATA TO BE DEPLOYED ---"
           # Use grep and sed to filter and clean the XML content:
           # 1. Filter lines containing <members> or <name> tags.
