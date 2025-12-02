@@ -13,17 +13,17 @@ on:
         type: string
       sgd_package_dir:
         description: "SFDX git delta generated package directory"
-        required: false
+        required: true
         default: "package"
         type: string
       sf_username:
         description: "Salesforce username"
-        required: false
+        required: true
         default: ""
         type: string      
       sf_login_url:
         description: "Salesforce Login URL"
-        required: false
+        required: true
         default: "https://login.salesforce.com"
         type: string
 
