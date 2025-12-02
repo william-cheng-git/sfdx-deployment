@@ -41,7 +41,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ github.event.inputs.branch_name }}
+          ref: ${{ inputs.branch_name }}
 
       - name: 📦 Setup Node.js
         uses: actions/setup-node@v4
@@ -63,7 +63,7 @@ jobs:
 
           # The SFDX Git Delta command calculates changes and outputs the paths to use.
           # We compare the last commit (HEAD) with the commit before it (HEAD~1).
-          sf sgd source delta --from HEAD --to HEAD~1 --output-dir "${{ github.event.inputs.sgd_package_dir }}"
+          sf sgd source delta --from HEAD --to HEAD~1 --output-dir "${{ inputs.sgd_package_dir }}"
 
           # Check if the package directory was created (i.e., if there are changes)
           if [ -d "package" ]; then
