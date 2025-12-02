@@ -10,6 +10,10 @@ on:
         description: Deployment Test Level
         required: true
         type: string
+      ENVIRONMENT:
+        description: Target deployment environment
+        required: true
+        type: string
       SF_USERNAME:
         description: Salesforce username
         required: true
@@ -36,7 +40,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    environment: Prod
+    environment: ${{inputs.ENVIRONMENT}}
     
     steps:
       - name: ⚙️ Checkout specified branch
