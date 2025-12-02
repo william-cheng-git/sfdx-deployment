@@ -63,7 +63,7 @@ jobs:
 
           # The SFDX Git Delta command calculates changes and outputs the paths to use.
           # We compare the last commit (HEAD) with the commit before it (HEAD~1).
-          sf sgd source delta --from HEAD --to HEAD~1 --output-dir ${{ github.event.inputs.sgd_package_dir }}
+          sf sgd source delta --from HEAD --to HEAD~1 --output-dir "${{ github.event.inputs.sgd_package_dir }}"
 
           # Check if the package directory was created (i.e., if there are changes)
           if [ -d "package" ]; then
