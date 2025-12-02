@@ -87,7 +87,7 @@ jobs:
           echo "${{ secrets.SF_SERVER_KEY }}" > server.key
           sf org login jwt --client-id "${{ secrets.SF_CONSUMER_KEY }}" \
             --jwt-key-file server.key \
-            --username "${{ inputs.sf_username }}" \
+            --username "${{ secrets.SF_USERNAME }}" \
             --instance-url "${{ inputs.sf_login_url }}" \
             --set-default-dev-hub \
             --alias deployment-target
