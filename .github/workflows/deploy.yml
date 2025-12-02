@@ -25,6 +25,9 @@ on:
         required: false
         default: "https://login.salesforce.com"
         type: string
+    secrets:
+      SF_SERVER_KEY:
+        description: OAuth Private key
 
 jobs:
   deploy:
