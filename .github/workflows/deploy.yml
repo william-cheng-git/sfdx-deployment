@@ -26,7 +26,7 @@ on:
         default: "https://login.salesforce.com"
         type: string
     secrets:
-      SF_PRIVATE_KEY:
+      SF_SERVER_KEY:
         description: Salesforce Private key to sign JWT
         required: true
       SF_CONSUMER_KEY:
