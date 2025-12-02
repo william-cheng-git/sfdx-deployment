@@ -1,6 +1,5 @@
 name: 🚀 Salesforce Deployment
 
-# 1. Configuration
 on:
   workflow_call:
     inputs:
@@ -23,7 +22,7 @@ on:
       SF_LOGIN_URL:
         description: Salesforce Login URL
         required: false
-        default: "https://login.salesforce.com"
+        default: https://login.salesforce.com
         type: string
     secrets:
       SF_SERVER_KEY:
@@ -36,12 +35,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
-    environment: Prod
-
-    # 2. Branch Selection and Conditional Run
-    # This prevents the workflow from continuing if the selected branch doesn't exist
-    # and ensures the checkout step uses the manually selected branch.
+    
     steps:
       - name: ⚙️ Checkout specified branch
         uses: actions/checkout@v4
@@ -60,36 +54,15 @@ jobs:
           # Install the sfdx-git-delta plugin
           echo "y" | sf plugins install sfdx-git-delta
 
-      # --- START DELTA CALCULATION ---
+
       - name: 🔍 Geneate Delta Package
         id: delta
         run: |
           # Create the output directory before running the delta command
-          mkdir package
+          mkdir "${{ inputs.SGD_PACKAGE_DIR }}"
 
-          # The SFDX Git Delta command calculates changes and outputs the paths to use.
-          # We compare the last commit (HEAD) with the commit before it (HEAD~1).
           sf sgd source delta --from HEAD --to HEAD~1 --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
 
-          # Check if the package directory was created (i.e., if there are changes)
-          if [ -d "package" ]; then
-            echo "has_changes=true" >> $GITHUB_OUTPUT
-            echo "Changes detected. Deploying delta."
-          else
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-            echo "No deployable changes detected between commits."
-          fi
-
-          ls package
-
-      - name: 🛑 Fail if no changes detected
-        if: steps.delta.outputs.has_changes == 'false'
-        run: |
-          echo "No deployable changes detected between HEAD^ and HEAD. Stopping deployment."
-          exit 1
-      # --- END DELTA CALCULATION ---
-
-      # 3. Secure Authentication (JWT Bearer Flow)
       - name: 🔒 Authenticate to Salesforce Org
         run: |
           echo "${{ secrets.SF_SERVER_KEY }}" > server.key
