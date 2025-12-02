@@ -64,6 +64,12 @@ jobs:
           mkdir "${{ inputs.SGD_PACKAGE_DIR }}"
 
           sf sgd source delta --from HEAD --to HEAD~1 --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
+          echo "--- START METADATA TO BE DEPLOYED ---"
+          # Use grep and sed to filter and clean the XML content:
+          # 1. Filter lines containing <members> or <name> tags.
+          # 2. Use sed to remove the XML tags, leaving only the content.
+          cat package/package.xml | grep -E '<members>|</members>|<name>|</name>' | sed -E 's/<\/?(members|name)>//g' | awk '{print $0}'
+          echo "--- END METADATA TO BE DEPLOYED ---"
 
       - name: 🔒 Authenticate to Salesforce Org
         run: |
