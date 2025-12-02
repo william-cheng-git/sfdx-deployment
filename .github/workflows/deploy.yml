@@ -35,6 +35,8 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
+    environment: Prod
     
     steps:
       - name: ⚙️ Checkout specified branch
