@@ -84,7 +84,7 @@ jobs:
       # 3. Secure Authentication (JWT Bearer Flow)
       - name: 🔒 Authenticate to Salesforce Org
         run: |
-          echo "${{ secrets.PRIVATE_KEY }}" > server.key
+          echo "${{ secrets.SF_PRIVATE_KEY }}" > server.key
           sf org login jwt --client-id "${{ secrets.SF_CLIENT_ID }}" \
             --jwt-key-file server.key \
             --username "${{ inputs.sf_username }}" \
