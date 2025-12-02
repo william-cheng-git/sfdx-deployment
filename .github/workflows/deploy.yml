@@ -26,15 +26,12 @@ on:
         required: false
         default: "https://login.salesforce.com"
         type: string
-    secrets:
-      sf_client_id:
-        required: true
-      sf_private_Key:
-        required: true
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
+    environment: Prod
 
     # 2. Branch Selection and Conditional Run
     # This prevents the workflow from continuing if the selected branch doesn't exist
@@ -88,8 +85,8 @@ jobs:
       # 3. Secure Authentication (JWT Bearer Flow)
       - name: 🔒 Authenticate to Salesforce Org
         run: |
-          echo "${{ github.event.secrets.sf_private_Key }}" > server.key
-          sf org login jwt --client-id "${{ github.event.secrets.sf_client_id }}" \
+          echo "${{ secrets.SERVER_KEY }}" > server.key
+          sf org login jwt --client-id "${{ secrets.secrets.SF_CONSUMER_KEY }}" \
             --jwt-key-file server.key \
             --username "${{ github.event.inputs.sf_username }}" \
             --instance-url "${{ github.event.inputs.sf_login_url }}" \
