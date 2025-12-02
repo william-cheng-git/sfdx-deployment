@@ -36,6 +36,10 @@ jobs:
     # This prevents the workflow from continuing if the selected branch doesn't exist
     # and ensures the checkout step uses the manually selected branch.
     steps:
+      - name: Debug
+        run: |
+          echo "TEST = ${{ vars.TEST }}"
+
       - name: ⚙️ Checkout specified branch
         uses: actions/checkout@v4
         with:
