@@ -46,12 +46,14 @@ jobs:
     environment: ${{inputs.ENVIRONMENT}}
     
     steps:
-      - name: ⚙️ Get Base Branch SHA
-        id: baseBranch
+      - name: ⚙️ Checkout base branch
         uses: actions/checkout@v6
         with:
           ref: ${{ inputs.BASE_BRANCH_NAME }}
+
+      - name: ⚙️ Get base branch SHA
       - run: |
+          id: baseBranch
           echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
     
       - name: ⚙️ Checkout specified branch
