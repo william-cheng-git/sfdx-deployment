@@ -46,17 +46,17 @@ jobs:
     environment: ${{inputs.ENVIRONMENT}}
     
     steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.BASE_BRANCH_NAME }}
+      - run: |
+          echo "bash_branch_sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+    
       - name: ⚙️ Checkout specified branch
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
           ref: ${{ inputs.BRANCH_NAME }}
-
-      - name: ⚙️ Checkout base branch
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-          ref: ${{ inputs.BASE_BRANCH_NAME }}
 
       - name: 📦 Setup Node.js
         uses: actions/setup-node@v4
