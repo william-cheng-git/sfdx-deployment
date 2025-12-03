@@ -87,17 +87,8 @@ jobs:
 
       - name: ✨ Deploy Delta Metadata
         run: |
-          export Environment=${{inputs.ENVIRONMENT}}
-
-          pwd
-          ls
-          pwd
-          ls config
-          pwd
-          ls ./config
-          cat config/${{inputs.ENVIRONMENT}}.json
-          
-          eval $(jq -r 'keys[] as $key | "export \($key)=\(.[$key])"' "config/${{inputs.ENVIRONMENT}}.json")
+          export Environment=${{inputs.ENVIRONMENT}}          
+          eval $(jq -r 'keys[] as $key | "export \($key)=\(.[$key])"' "config/env/${{inputs.ENVIRONMENT}}.json")
           
           sf project deploy start \
             -x "${{ inputs.SGD_PACKAGE_DIR }}/package/package.xml" \
