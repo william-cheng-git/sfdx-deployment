@@ -68,11 +68,29 @@ jobs:
           mkdir "${{ inputs.SGD_PACKAGE_DIR }}"
 
           sf sgd source delta --from HEAD~1 --to HEAD --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
+
+      - name: 📋 Print Formatted Deployment List
+        run: |
           echo "--- START METADATA TO BE DEPLOYED ---"
-          # Use grep and sed to filter and clean the XML content:
-          # 1. Filter lines containing <members> or <name> tags.
-          # 2. Use sed to remove the XML tags, leaving only the content.
-          cat "${{ inputs.SGD_PACKAGE_DIR }}"/package/package.xml | grep -E '<members>|</members>|<name>|</name>' | sed -E 's/<\/?(members|name)>//g' | awk '{print $0}'
+          
+          # Use grep to find lines containing members and name tags.
+          # Then, use awk to process them in sequence and format the output.
+          cat package/package.xml | \
+            grep -E 'members|name' | \
+            awk '
+              /<members>/ {
+                # 1. Extract and store the Member Name (remove tags)
+                MEMBER = $0;
+                gsub(/<(\/?members)>/, "", MEMBER);
+              }
+              /<name>/ {
+                # 2. Extract and store the Metadata Type Name (remove tags)
+                TYPE = $0;
+                gsub(/<(\/?name)>/, "", TYPE);
+                
+                # 3. Print the stored pair in the desired format
+                printf "%s : %s\n", TYPE, MEMBER;
+              }'
           echo "--- END METADATA TO BE DEPLOYED ---"
 
       - name: 🔒 Authenticate to Salesforce Org
