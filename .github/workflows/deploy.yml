@@ -75,7 +75,7 @@ jobs:
           
           # Use grep to find lines containing members and name tags.
           # Then, use awk to process them in sequence and format the output.
-          cat package/package.xml | \
+          cat ${{ inputs.SGD_PACKAGE_DIR }}/package/package.xml | \
             grep -E 'members|name' | \
             awk '
               /<members>/ {
