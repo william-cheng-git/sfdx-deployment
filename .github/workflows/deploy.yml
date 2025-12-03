@@ -88,6 +88,8 @@ jobs:
       - name: ✨ Deploy Delta Metadata
         run: |
           export Environment=${{inputs.ENVIRONMENT}}
+          eval $(jq -r 'keys[] as $key | "export \($key)=\(.[$key])"' "config/${{inputs.ENVIRONMENT}}.json")
+          
           sf project deploy start \
             -x "${{ inputs.SGD_PACKAGE_DIR }}/package/package.xml" \
             --post-destructive-changes "${{ inputs.SGD_PACKAGE_DIR }}/destructiveChanges/destructiveChanges.xml" \
