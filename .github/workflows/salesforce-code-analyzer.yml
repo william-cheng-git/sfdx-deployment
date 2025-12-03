@@ -1,6 +1,10 @@
 name: Salesforce Code Analyzer Workflow
 on:
-  workflow_dispatch
+  workflow_dispatch:
+    inputs:
+      BRANCH_NAME:
+        required: true
+        type: string
 
 jobs:
   salesforce-code-analyzer-workflow:
@@ -14,6 +18,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0  # Fetch all history for all branches and tags
+          ref: ${{ inputs.BRANCH_NAME }}
 
       # PREREQUISITES - Only needed if the runner doesn't already satisfy these requirements.
       - name: Ensure node v20.9.0 or greater
@@ -36,38 +41,39 @@ jobs:
       - name: Install Latest Salesforce Code Analyzer CLI Plugin
         run: sf plugins install code-analyzer@latest
 
-      - name: Get changed files
-        id: changed
-        run: |
-          git fetch origin ${{ github.base_ref }} --depth=1
+      # - name: Get changed files
+      #   id: changed
+      #   run: |
+      #     git fetch origin ${{ github.base_ref }} --depth=1
 
-          RAW_CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD || true)
-          echo "Raw changed files:"
-          echo "$RAW_CHANGED_FILES"
+      #     RAW_CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD || true)
+      #     echo "Raw changed files:"
+      #     echo "$RAW_CHANGED_FILES"
 
-          CHANGED_FILES_BY_TYPE=$(echo "$RAW_CHANGED_FILES" | grep -E '\.(cls|trigger|html|htm|xhtml|xht|shtml|cmp|js|cjs|mjs|ts|page|component|xml)$' || true)
-          echo "Changed files by type:"
-          echo "$CHANGED_FILES_BY_TYPE"
+      #     CHANGED_FILES_BY_TYPE=$(echo "$RAW_CHANGED_FILES" | grep -E '\.(cls|trigger|html|htm|xhtml|xht|shtml|cmp|js|cjs|mjs|ts|page|component|xml)$' || true)
+      #     echo "Changed files by type:"
+      #     echo "$CHANGED_FILES_BY_TYPE"
           
-          CHANGED_FILES=$(echo "$CHANGED_FILES_BY_TYPE" | grep -E 'force-app' || true)
-          echo "Changed files:"
-          echo "$CHANGED_FILES"
+      #     CHANGED_FILES=$(echo "$CHANGED_FILES_BY_TYPE" | grep -E 'force-app' || true)
+      #     echo "Changed files:"
+      #     echo "$CHANGED_FILES"
           
-          TARGET_ARGS=$(echo "$CHANGED_FILES" | sed 's/^/--target \"/g' | sed 's/$/"/g' || true)
-          TARGET_ARGS=$(echo $TARGET_ARGS)
-          echo "Computed target arguments:"
-          echo "$TARGET_ARGS"
+      #     TARGET_ARGS=$(echo "$CHANGED_FILES" | sed 's/^/--target \"/g' | sed 's/$/"/g' || true)
+      #     TARGET_ARGS=$(echo $TARGET_ARGS)
+      #     echo "Computed target arguments:"
+      #     echo "$TARGET_ARGS"
 
-          echo "target=$TARGET_ARGS" >> $GITHUB_OUTPUT
-          echo "changed_files<<EOF" >> $GITHUB_OUTPUT
-          echo "$CHANGED_FILES" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+      #     echo "target=$TARGET_ARGS" >> $GITHUB_OUTPUT
+      #     echo "changed_files<<EOF" >> $GITHUB_OUTPUT
+      #     echo "$CHANGED_FILES" >> $GITHUB_OUTPUT
+      #     echo "EOF" >> $GITHUB_OUTPUT
+
       - name: Run Salesforce Code Analyzer on changed files
         if: steps.changed.outputs.changed_files != ''
         id: run-code-analyzer
         uses: forcedotcom/run-code-analyzer@v2
         with:
-          run-arguments: --workspace . ${{ steps.changed.outputs.target }} --view detail --output-file sfca_results.html --output-file sfca_results.json --severity-threshold 2
+          run-arguments: --workspace . --view detail --output-file sfca_results.html --output-file sfca_results.json --severity-threshold 2
           results-artifact-name: salesforce-code-analyzer-results
           github-token: ${{ github.token }}
 
