@@ -1,6 +1,6 @@
 name: Salesforce Code Analyzer Workflow
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       BRANCH_NAME:
         required: true
