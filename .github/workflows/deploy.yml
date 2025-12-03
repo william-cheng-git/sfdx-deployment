@@ -46,11 +46,13 @@ jobs:
     environment: ${{inputs.ENVIRONMENT}}
     
     steps:
-      - uses: actions/checkout@v6
+      - name: ⚙️ Get Base Branch SHA
+        id: baseBranch
+        uses: actions/checkout@v6
         with:
           ref: ${{ inputs.BASE_BRANCH_NAME }}
       - run: |
-          echo "bash_branch_sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+          echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
     
       - name: ⚙️ Checkout specified branch
         uses: actions/checkout@v6
@@ -76,7 +78,7 @@ jobs:
           # Create the output directory before running the delta command
           mkdir "${{ inputs.SGD_PACKAGE_DIR }}"
 
-          sf sgd source delta --from ${{ inputs.BASE_BRANCH_NAME }} --to ${{ inputs.BRANCH_NAME }} --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
+          sf sgd source delta --from ${{ steps.bashBranch.outputs.sha }} --to ${{ inputs.BRANCH_NAME }} --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
 
       - name: 📋 Print Formatted Deployment List
         run: |
