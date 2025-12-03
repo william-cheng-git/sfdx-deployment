@@ -91,6 +91,7 @@ jobs:
 
           pwd
           ls
+          ls config
           cat config/${{inputs.ENVIRONMENT}}.json
           
           eval $(jq -r 'keys[] as $key | "export \($key)=\(.[$key])"' "config/${{inputs.ENVIRONMENT}}.json")
