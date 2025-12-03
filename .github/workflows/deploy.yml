@@ -76,7 +76,7 @@ jobs:
           # Create the output directory before running the delta command
           mkdir "${{ inputs.SGD_PACKAGE_DIR }}"
 
-          sf sgd source delta --from ${{ inputs.BASE_BRANCH_NAME }} --to HEAD --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
+          sf sgd source delta --from ${{ inputs.BASE_BRANCH_NAME }} --to ${{ inputs.BRANCH_NAME }} --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
 
       - name: 📋 Print Formatted Deployment List
         run: |
