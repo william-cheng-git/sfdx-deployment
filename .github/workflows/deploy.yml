@@ -121,11 +121,12 @@ jobs:
           export Environment=${{inputs.ENVIRONMENT}}          
           eval $(jq -r 'keys[] as $key | "export \($key)=\(.[$key])"' "config/env/${{inputs.ENVIRONMENT}}.json")
           
-          sf project deploy start \
+          DEPLOYMENT_RESULT=$(sf project deploy start \
             -x "${{ inputs.SGD_PACKAGE_DIR }}/package/package.xml" \
             --post-destructive-changes "${{ inputs.SGD_PACKAGE_DIR }}/destructiveChanges/destructiveChanges.xml" \
             --target-org deployment-target \
-            --test-level ${{ github.event.inputs.TEST_LEVEL }}
+            --test-level ${{ github.event.inputs.TEST_LEVEL }} \
+            --async)
 
           # DEPLOY_ID=$(echo $DEPLOYMENT_RESULT | jq -r '.result.id')
 
