@@ -29,7 +29,7 @@ on:
       DEPLOYMENT_MODE:
         description: Deployment mode, expected values DEPLOY | VALIDATE | QUICK
         required: false
-        default: DEPLOY
+        default: VALIDATE
         type: string
       JOB_ID:
         description: Deployment Job Id, required if using quick deploy
@@ -142,7 +142,7 @@ jobs:
             --set-default-dev-hub \
             --alias deployment-target
 
-      - name: ✨ Deploy Delta Metadata
+      - name: ✨ Deploy Metadata
         run: |
           export Environment=${{inputs.ENVIRONMENT}}
           eval $(jq -r 'keys[] as $key | "export \($key)=\(.[$key])"' "config/env/${{inputs.ENVIRONMENT}}.json")
