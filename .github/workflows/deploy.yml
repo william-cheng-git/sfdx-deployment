@@ -149,7 +149,7 @@ jobs:
 
           if [ "${{ inputs.DEPLOYMENT_MODE }}" == "DEPLOY" ]; then
             DEPLOYMENT_RESULT=$(sf project deploy start \
-              -x "${{ inputs.SGD_PACKAGE_DIR }}/package/package.xml" \
+              --manifest "${{ inputs.SGD_PACKAGE_DIR }}/package/package.xml" \
               --post-destructive-changes "${{ inputs.SGD_PACKAGE_DIR }}/destructiveChanges/destructiveChanges.xml" \
               --target-org deployment-target \
               --test-level ${{ github.event.inputs.TEST_LEVEL }} \
@@ -157,8 +157,7 @@ jobs:
               --json)
           elif [ "${{ inputs.DEPLOYMENT_MODE }}" == "VALIDATE" ]; then
             DEPLOYMENT_RESULT=$(sf project deploy validate \
-              -x "${{ inputs.SGD_PACKAGE_DIR }}/package/package.xml" \
-              --post-destructive-changes "${{ inputs.SGD_PACKAGE_DIR }}/destructiveChanges/destructiveChanges.xml" \
+              --manifest "${{ inputs.SGD_PACKAGE_DIR }}/package/package.xml" \
               --target-org deployment-target \
               --test-level ${{ github.event.inputs.TEST_LEVEL }} \
               --async \
