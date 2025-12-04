@@ -153,7 +153,7 @@ jobs:
           sf project deploy report \
             --target-org deployment-target \
             --job-id $DEPLOY_ID \
-            --wait 30 # This flag handles the polling wait time itself
+            --wait 1 # This flag handles the polling wait time itself
 
           # REPORT_RESULT=$(sf project deploy report \
           #   --target-org deployment-target \
