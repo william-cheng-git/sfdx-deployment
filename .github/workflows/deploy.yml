@@ -62,7 +62,7 @@ jobs:
     
     steps:
       - name: ⚙️ Checkout base branch
-        if: inputs.DEPLOYMENT_SCOPE == 'DELTA' and inputs.DEPLOYMENT_MODE != 'QUICK'
+        if: inputs.DEPLOYMENT_SCOPE == 'DELTA' && inputs.DEPLOYMENT_MODE != 'QUICK'
         uses: actions/checkout@v6
         with:
           ref: ${{ inputs.BASE_BRANCH_NAME }}
