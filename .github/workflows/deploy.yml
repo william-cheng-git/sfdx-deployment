@@ -55,31 +55,14 @@ on:
         required: true
 
 jobs:
-  setup:
-    if: inputs.DEPLOYMENT_MODE != 'QUICK'
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: 📦 Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "24" # Use a recent stable Node.js version
-
-      - name: 💾 Install Salesforce CLI and Plugins
-        run: |
-          npm install -g @salesforce/cli
-          # Install the sfdx-git-delta plugin
-          echo "y" | sf plugins install sfdx-git-delta
-    
   deploy:
-    needs: setup
     runs-on: ubuntu-latest
 
     environment: ${{inputs.ENVIRONMENT}}
     
     steps:
       - name: ⚙️ Checkout base branch
-        if: inputs.DEPLOYMENT_SCOPE == 'DELTA'
+        if: inputs.DEPLOYMENT_SCOPE == 'DELTA' and inputs.DEPLOYMENT_MODE != 'QUICK'
         uses: actions/checkout@v6
         with:
           ref: ${{ inputs.BASE_BRANCH_NAME }}
