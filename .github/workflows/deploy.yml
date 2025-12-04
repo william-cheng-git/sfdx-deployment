@@ -72,6 +72,7 @@ jobs:
           echo "y" | sf plugins install sfdx-git-delta
     
   deploy:
+    needs: setup
     runs-on: ubuntu-latest
 
     environment: ${{inputs.ENVIRONMENT}}
