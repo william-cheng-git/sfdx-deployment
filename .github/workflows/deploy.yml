@@ -21,6 +21,11 @@ on:
         description: Salesforce username
         required: true
         type: string
+      DEPLOYMENT_MODE:
+        description: Deployment mode, expected values FULL | DELTA
+        required: false
+        default: FULL
+        type: string
       SGD_PACKAGE_DIR:
         description: SFDX git delta generated package directory
         required: false
@@ -47,11 +52,13 @@ jobs:
     
     steps:
       - name: ⚙️ Checkout base branch
+        if: inputs.DEPLOYMENT_MODE == 'DELTA'
         uses: actions/checkout@v6
         with:
           ref: ${{ inputs.BASE_BRANCH_NAME }}
 
       - name: ⚙️ Get base branch SHA
+        if: inputs.DEPLOYMENT_MODE == 'DELTA'
         id: baseBranch
         run: |
           echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
@@ -75,15 +82,15 @@ jobs:
 
 
       - name: 🔍 Geneate Delta Package
-        id: delta
+        if: inputs.DEPLOYMENT_MODE == 'DELTA'
         run: |
-          # Create the output directory before running the delta command
+          # Create the output directory before running the SGD command
           mkdir "${{ inputs.SGD_PACKAGE_DIR }}"
 
-          # sf sgd source delta --from ${{ steps.baseBranch.outputs.sha }} --to ${{ inputs.BRANCH_NAME }} --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
-          sf sgd source delta --from 4b825dc642cb6eb9a060e54bf8d69288fbee4904 --to ${{ inputs.BRANCH_NAME }} --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
+          sf sgd source delta --from ${{ steps.baseBranch.outputs.sha }} --to ${{ inputs.BRANCH_NAME }} --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
 
       - name: 📋 Print Formatted Deployment List
+        if: inputs.DEPLOYMENT_MODE == 'DELTA'
         run: |
           echo "--- START METADATA TO BE DEPLOYED ---"
           
@@ -106,6 +113,15 @@ jobs:
                 printf "%s : %s\n", TYPE, MEMBER;
               }'
           echo "--- END METADATA TO BE DEPLOYED ---"
+
+      - name: 🔍 Geneate full Package
+        if: inputs.DEPLOYMENT_MODE == 'FULL'
+        run: |
+          # Create the output directory before running the SGD command
+          mkdir "${{ inputs.SGD_PACKAGE_DIR }}"
+
+          # 4b825dc642cb6eb9a060e54bf8d69288fbee4904 is Empty Tree SHA
+          sf sgd source delta --from 4b825dc642cb6eb9a060e54bf8d69288fbee4904 --to ${{ inputs.BRANCH_NAME }} --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
 
       - name: 🔒 Authenticate to Salesforce Org
         run: |
