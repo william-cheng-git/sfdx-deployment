@@ -55,6 +55,18 @@ jobs:
         id: baseBranch
         run: |
           echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+
+      - name: 🔑 Get Initial Commit SHA
+        id: initialCommit
+        run: |
+          # Use git rev-list to find the SHA of the commit with zero parents (the first commit)
+          INITIAL_SHA=$(git rev-list --max-parents=0 HEAD)
+          
+          echo "Initial Commit SHA: $INITIAL_SHA"
+          
+          # Set the SHA as a job output for later steps/jobs to use
+          echo "sha=$INITIAL_SHA" >> $GITHUB_OUTPUT
+
     
       - name: ⚙️ Checkout specified branch
         uses: actions/checkout@v6
@@ -80,7 +92,8 @@ jobs:
           # Create the output directory before running the delta command
           mkdir "${{ inputs.SGD_PACKAGE_DIR }}"
 
-          sf sgd source delta --from ${{ steps.baseBranch.outputs.sha }} --to ${{ inputs.BRANCH_NAME }} --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
+          # sf sgd source delta --from ${{ steps.baseBranch.outputs.sha }} --to ${{ inputs.BRANCH_NAME }} --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
+          sf sgd source delta --from ${{ steps.initialCommit.outputs.sha }} --to ${{ inputs.BRANCH_NAME }} --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
 
       - name: 📋 Print Formatted Deployment List
         run: |
