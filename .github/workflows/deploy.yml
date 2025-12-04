@@ -29,7 +29,7 @@ on:
       DEPLOYMENT_MODE:
         description: Deployment mode, expected values DEPLOY | VALIDATE | QUICK
         required: false
-        default: QUICK
+        default: DEPLOY
         type: string
       JOB_ID:
         description: Deployment Job Id, required if using quick deploy
