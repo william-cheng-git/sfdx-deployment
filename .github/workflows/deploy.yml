@@ -62,17 +62,6 @@ jobs:
           fetch-depth: 0
           ref: ${{ inputs.BRANCH_NAME }}
 
-      - name: 🔑 Get Initial Commit SHA
-        id: initialCommit
-        run: |
-          # Use git rev-list to find the SHA of the commit with zero parents (the first commit)
-          INITIAL_SHA=$(git rev-list --max-parents=0 HEAD)
-          
-          echo "Initial Commit SHA: $INITIAL_SHA"
-          
-          # Set the SHA as a job output for later steps/jobs to use
-          echo "sha=$INITIAL_SHA" >> $GITHUB_OUTPUT
-
       - name: 📦 Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -92,7 +81,7 @@ jobs:
           mkdir "${{ inputs.SGD_PACKAGE_DIR }}"
 
           # sf sgd source delta --from ${{ steps.baseBranch.outputs.sha }} --to ${{ inputs.BRANCH_NAME }} --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
-          sf sgd source delta --from ${{ steps.initialCommit.outputs.sha }} --to ${{ inputs.BRANCH_NAME }} --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
+          sf sgd source delta --from 4b825dc642cb6eb9a060e54bf8d69288fbee4904 --to ${{ inputs.BRANCH_NAME }} --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
 
       - name: 📋 Print Formatted Deployment List
         run: |
