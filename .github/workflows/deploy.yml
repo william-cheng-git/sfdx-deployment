@@ -66,7 +66,6 @@ jobs:
         id: initialCommit
         run: |
           # Use git rev-list to find the SHA of the commit with zero parents (the first commit)
-          fetch-depth: 0
           INITIAL_SHA=$(git rev-list --max-parents=0 HEAD)
           
           echo "Initial Commit SHA: $INITIAL_SHA"
