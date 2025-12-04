@@ -121,9 +121,28 @@ jobs:
           export Environment=${{inputs.ENVIRONMENT}}          
           eval $(jq -r 'keys[] as $key | "export \($key)=\(.[$key])"' "config/env/${{inputs.ENVIRONMENT}}.json")
           
-          sf project deploy start \
+          DEPLOYMENT_RESULT=$(sf project deploy start \
             -x "${{ inputs.SGD_PACKAGE_DIR }}/package/package.xml" \
             --post-destructive-changes "${{ inputs.SGD_PACKAGE_DIR }}/destructiveChanges/destructiveChanges.xml" \
             --target-org deployment-target \
-            --test-level ${{ github.event.inputs.TEST_LEVEL }} \
-            --wait 30
+            --test-level ${{ github.event.inputs.TEST_LEVEL }})
+
+          DEPLOY_ID=$(echo $DEPLOYMENT_RESULT | jq -r '.result.id')
+
+          echo "Deployment started with ID: $DEPLOY_ID"
+
+          REPORT_RESULT=$(sf project deploy report \
+            --target-org deployment-target \
+            --job-id $DEPLOY_ID \
+            --json \
+            --wait 30) # This flag handles the polling wait time itself
+
+          # Extract final status
+          STATUS=$(echo $REPORT_RESULT | jq -r '.result.status')
+          echo "Final Status: $STATUS"
+
+          # Check final status and fail the job if deployment failed
+          if [ "$STATUS" != "Succeeded" ]; then
+            echo "Deployment failed. Check the full report above."
+            exit 1
+          fi
