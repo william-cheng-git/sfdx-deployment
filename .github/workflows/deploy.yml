@@ -10,7 +10,7 @@ on:
         required: true
         type: string
       TEST_LEVEL:
-        description: Deployment Test Level, expected values NoTestRun | RunLocalTests | RunAllTestsInOrg
+        description: Deployment Test Level, expected values NoTestRun | RunLocalTests | RunAllTestsInOrg | RunSpecifiedTests
         required: true
         type: string
       ENVIRONMENT:
