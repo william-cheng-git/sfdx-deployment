@@ -73,7 +73,7 @@ jobs:
           echo "y" | sf plugins install sfdx-git-delta
 
       - name: Generate deployment package
-        uses: ./generate-deployment-package.yml
+        uses: ./.github/workflows/generate-deployment-package.yml
         with:
             BRANCH_NAME: ${{ inputs.BRANCH_NAME }}
             BASE_BRANCH_NAME: ${{ inputs.BASE_BRANCH_NAME }}
