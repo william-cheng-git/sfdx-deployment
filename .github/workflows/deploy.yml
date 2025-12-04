@@ -29,11 +29,12 @@ on:
       DEPLOYMENT_MODE:
         description: Deployment mode, expected values DEPLOY | VALIDATE | QUICK
         required: false
-        default: VALIDATE
+        default: QUICK
         type: string
       JOB_ID:
         description: Deployment Job Id, required if using quick deploy
         required: false
+        default: 0AfdL00000TErVBSA1
         type: string
       SGD_PACKAGE_DIR:
         description: SFDX git delta generated package directory
