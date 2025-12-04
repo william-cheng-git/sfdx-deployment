@@ -55,6 +55,12 @@ jobs:
         id: baseBranch
         run: |
           echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+    
+      - name: ⚙️ Checkout specified branch
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.BRANCH_NAME }}
 
       - name: 🔑 Get Initial Commit SHA
         id: initialCommit
@@ -66,13 +72,6 @@ jobs:
           
           # Set the SHA as a job output for later steps/jobs to use
           echo "sha=$INITIAL_SHA" >> $GITHUB_OUTPUT
-
-    
-      - name: ⚙️ Checkout specified branch
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-          ref: ${{ inputs.BRANCH_NAME }}
 
       - name: 📦 Setup Node.js
         uses: actions/setup-node@v4
