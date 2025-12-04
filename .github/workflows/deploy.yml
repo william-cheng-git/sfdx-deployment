@@ -24,7 +24,7 @@ on:
       DEPLOYMENT_MODE:
         description: Deployment mode, expected values FULL | DELTA
         required: false
-        default: FULL
+        default: DELTA
         type: string
       SGD_PACKAGE_DIR:
         description: SFDX git delta generated package directory
