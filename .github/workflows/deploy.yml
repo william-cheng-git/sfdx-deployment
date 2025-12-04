@@ -147,7 +147,7 @@ jobs:
           export Environment=${{inputs.ENVIRONMENT}}
           eval $(jq -r 'keys[] as $key | "export \($key)=\(.[$key])"' "config/env/${{inputs.ENVIRONMENT}}.json")
 
-          if [ "${{ inputs.DEPLOYMENT_MODE }}" == "DEPLOY"]; then
+          if [ "${{ inputs.DEPLOYMENT_MODE }}" == "DEPLOY" ]; then
             DEPLOYMENT_RESULT=$(sf project deploy start \
               -x "${{ inputs.SGD_PACKAGE_DIR }}/package/package.xml" \
               --post-destructive-changes "${{ inputs.SGD_PACKAGE_DIR }}/destructiveChanges/destructiveChanges.xml" \
@@ -155,7 +155,7 @@ jobs:
               --test-level ${{ github.event.inputs.TEST_LEVEL }} \
               --async \
               --json)
-          elif [ "${{ inputs.DEPLOYMENT_MODE }}" == "VALIDATE"]; then
+          elif [ "${{ inputs.DEPLOYMENT_MODE }}" == "VALIDATE" ]; then
             DEPLOYMENT_RESULT=$(sf project deploy validate \
               -x "${{ inputs.SGD_PACKAGE_DIR }}/package/package.xml" \
               --post-destructive-changes "${{ inputs.SGD_PACKAGE_DIR }}/destructiveChanges/destructiveChanges.xml" \
@@ -163,7 +163,7 @@ jobs:
               --test-level ${{ github.event.inputs.TEST_LEVEL }} \
               --async \
               --json)
-          elif [ "${{ inputs.DEPLOYMENT_MODE }}" == "QUICK"]; then
+          elif [ "${{ inputs.DEPLOYMENT_MODE }}" == "QUICK" ]; then
             DEPLOYMENT_RESULT=$(sf project deploy quick \
               --job-id ${{ inputs.JOB_ID }}
               --target-org deployment-target \
