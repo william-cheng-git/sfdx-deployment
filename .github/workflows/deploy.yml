@@ -79,16 +79,16 @@ jobs:
           fetch-depth: 0
           ref: ${{ inputs.BRANCH_NAME }}
 
-      # - name: 📦 Setup Node.js
-      #   uses: actions/setup-node@v4
-      #   with:
-      #     node-version: "24" # Use a recent stable Node.js version
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24" # Use a recent stable Node.js version
 
-      # - name: 💾 Install Salesforce CLI and Plugins
-      #   run: |
-      #     npm install -g @salesforce/cli
-      #     # Install the sfdx-git-delta plugin
-      #     echo "y" | sf plugins install sfdx-git-delta
+      - name: 💾 Install Salesforce CLI and Plugins
+        run: |
+          npm install -g @salesforce/cli
+          # Install the sfdx-git-delta plugin
+          echo "y" | sf plugins install sfdx-git-delta
 
 
       - name: 🔍 Geneate Delta Package
