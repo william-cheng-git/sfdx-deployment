@@ -21,10 +21,19 @@ on:
         description: Salesforce username
         required: true
         type: string
-      DEPLOYMENT_MODE:
-        description: Deployment mode, expected values FULL | DELTA
+      DEPLOYMENT_SCOPE:
+        description: Deployment scope, expected values FULL | DELTA
         required: false
         default: DELTA
+        type: string
+      DEPLOYMENT_MODE:
+        description: Deployment mode, expected values DEPLOY | VALIDATE | QUICK
+        required: false
+        default: DEPLOY
+        type: string
+      JOB_ID:
+        description: Deployment Job Id, required if using quick deploy
+        required: false
         type: string
       SGD_PACKAGE_DIR:
         description: SFDX git delta generated package directory
@@ -52,13 +61,13 @@ jobs:
     
     steps:
       - name: ⚙️ Checkout base branch
-        if: inputs.DEPLOYMENT_MODE == 'DELTA'
+        if: inputs.DEPLOYMENT_SCOPE == 'DELTA'
         uses: actions/checkout@v6
         with:
           ref: ${{ inputs.BASE_BRANCH_NAME }}
 
       - name: ⚙️ Get base branch SHA
-        if: inputs.DEPLOYMENT_MODE == 'DELTA'
+        if: inputs.DEPLOYMENT_SCOPE == 'DELTA'
         id: baseBranch
         run: |
           echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
@@ -82,7 +91,7 @@ jobs:
 
 
       - name: 🔍 Geneate Delta Package
-        if: inputs.DEPLOYMENT_MODE == 'DELTA'
+        if: inputs.DEPLOYMENT_SCOPE == 'DELTA'
         run: |
           # Create the output directory before running the SGD command
           mkdir "${{ inputs.SGD_PACKAGE_DIR }}"
@@ -90,7 +99,7 @@ jobs:
           sf sgd source delta --from ${{ steps.baseBranch.outputs.sha }} --to ${{ inputs.BRANCH_NAME }} --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
 
       - name: 📋 Print Formatted Deployment List
-        if: inputs.DEPLOYMENT_MODE == 'DELTA'
+        if: inputs.DEPLOYMENT_SCOPE == 'DELTA'
         run: |
           echo "--- START METADATA TO BE DEPLOYED ---"
           
@@ -115,7 +124,7 @@ jobs:
           echo "--- END METADATA TO BE DEPLOYED ---"
 
       - name: 🔍 Geneate full Package
-        if: inputs.DEPLOYMENT_MODE == 'FULL'
+        if: inputs.DEPLOYMENT_SCOPE == 'FULL'
         run: |
           # Create the output directory before running the SGD command
           mkdir "${{ inputs.SGD_PACKAGE_DIR }}"
@@ -135,16 +144,31 @@ jobs:
 
       - name: ✨ Deploy Delta Metadata
         run: |
-          export Environment=${{inputs.ENVIRONMENT}}          
+          export Environment=${{inputs.ENVIRONMENT}}
           eval $(jq -r 'keys[] as $key | "export \($key)=\(.[$key])"' "config/env/${{inputs.ENVIRONMENT}}.json")
-          
-          DEPLOYMENT_RESULT=$(sf project deploy start \
-            -x "${{ inputs.SGD_PACKAGE_DIR }}/package/package.xml" \
-            --post-destructive-changes "${{ inputs.SGD_PACKAGE_DIR }}/destructiveChanges/destructiveChanges.xml" \
-            --target-org deployment-target \
-            --test-level ${{ github.event.inputs.TEST_LEVEL }} \
-            --async \
-            --json)
+
+          if [ "${{ inputs.DEPLOYMENT_MODE }}" == "DEPLOY"]; then
+            DEPLOYMENT_RESULT=$(sf project deploy start \
+              -x "${{ inputs.SGD_PACKAGE_DIR }}/package/package.xml" \
+              --post-destructive-changes "${{ inputs.SGD_PACKAGE_DIR }}/destructiveChanges/destructiveChanges.xml" \
+              --target-org deployment-target \
+              --test-level ${{ github.event.inputs.TEST_LEVEL }} \
+              --async \
+              --json)
+          elseif [ "${{ inputs.DEPLOYMENT_MODE }}" == "VALIDATE"]; then
+            DEPLOYMENT_RESULT=$(sf project deploy validate \
+              -x "${{ inputs.SGD_PACKAGE_DIR }}/package/package.xml" \
+              --post-destructive-changes "${{ inputs.SGD_PACKAGE_DIR }}/destructiveChanges/destructiveChanges.xml" \
+              --target-org deployment-target \
+              --test-level ${{ github.event.inputs.TEST_LEVEL }} \
+              --async \
+              --json)
+          elseif [ "${{ inputs.DEPLOYMENT_MODE }}" == "QUICK"]; then
+            DEPLOYMENT_RESULT=$(sf project deploy quick \
+              --job-id ${{ inputs.JOB_ID }}
+              --target-org deployment-target \
+              --json)
+          fi
 
           DEPLOY_ID=$(echo $DEPLOYMENT_RESULT | jq -r '.result.id')
 
