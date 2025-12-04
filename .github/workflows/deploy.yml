@@ -156,12 +156,12 @@ jobs:
               --async \
               --json)
           elif [ "${{ inputs.DEPLOYMENT_MODE }}" == "VALIDATE" ]; then
-            sf project deploy validate \
+            DEPLOYMENT_RESULT=$(sf project deploy validate \
               --manifest "${{ inputs.SGD_PACKAGE_DIR }}/package/package.xml" \
               --target-org deployment-target \
               --test-level ${{ github.event.inputs.TEST_LEVEL }} \
               --async \
-              --json
+              --json)
 
             # echo $DEPLOYMENT_RESULT
           elif [ "${{ inputs.DEPLOYMENT_MODE }}" == "QUICK" ]; then
