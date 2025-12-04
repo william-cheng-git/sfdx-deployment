@@ -75,10 +75,10 @@ jobs:
       - name: Generate deployment package
         uses: ./generate-deployment-package.yml
         with:
-            BRANCH_NAME: ${{ BRANCH_NAME }}
-            BASE_BRANCH_NAME: ${{ BASE_BRANCH_NAME }}
-            DEPLOYMENT_SCOPE: ${{ DEPLOYMENT_SCOPE }}
-            SGD_PACKAGE_DIR: ${{ SGD_PACKAGE_DIR }}
+            BRANCH_NAME: ${{ inputs.BRANCH_NAME }}
+            BASE_BRANCH_NAME: ${{ inputs.BASE_BRANCH_NAME }}
+            DEPLOYMENT_SCOPE: ${{ inputs.DEPLOYMENT_SCOPE }}
+            SGD_PACKAGE_DIR: ${{ inputs.SGD_PACKAGE_DIR }}
       
       # - name: ⚙️ Checkout base branch
       #   if: ${{ inputs.DEPLOYMENT_SCOPE == 'DELTA' && inputs.DEPLOYMENT_MODE != 'QUICK' }}
