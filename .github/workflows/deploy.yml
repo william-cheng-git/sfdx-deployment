@@ -150,11 +150,10 @@ jobs:
 
           echo "Deployment started with ID: $DEPLOY_ID"
 
-          REPORT_RESULT=$(sf project deploy report \
+          sf project deploy report \
             --target-org deployment-target \
             --job-id $DEPLOY_ID \
-            --json \
-            --wait 30) # This flag handles the polling wait time itself
+            --wait 30 # This flag handles the polling wait time itself
 
           # REPORT_RESULT=$(sf project deploy report \
           #   --target-org deployment-target \
