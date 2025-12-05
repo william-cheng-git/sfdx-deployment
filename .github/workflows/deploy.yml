@@ -85,7 +85,7 @@ jobs:
           ref: ${{ inputs.BASE_BRANCH_NAME }}
 
       - name: ⚙️ Get base branch SHA
-        if: inputs.DEPLOYMENT_SCOPE == 'DELTA'
+        if: ${{ inputs.DEPLOYMENT_SCOPE == 'DELTA' && inputs.DEPLOYMENT_MODE != 'QUICK' }}
         id: baseBranch
         run: |
           echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
@@ -104,30 +104,30 @@ jobs:
 
           sf sgd source delta --from ${{ steps.baseBranch.outputs.sha }} --to ${{ inputs.BRANCH_NAME }} --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
 
-      - name: 📋 Print Formatted Deployment List
-        if: inputs.DEPLOYMENT_SCOPE == 'DELTA'
-        run: |
-          echo "--- START METADATA TO BE DEPLOYED ---"
+      # - name: 📋 Print Formatted Deployment List
+      #   if: inputs.DEPLOYMENT_SCOPE == 'DELTA'
+      #   run: |
+      #     echo "--- START METADATA TO BE DEPLOYED ---"
           
-          # Use grep to find lines containing members and name tags.
-          # Then, use awk to process them in sequence and format the output.
-          cat ${{ inputs.SGD_PACKAGE_DIR }}/package/package.xml | \
-            grep -E 'members|name' | \
-            awk '
-              /<members>/ {
-                # 1. Extract and store the Member Name (remove tags)
-                MEMBER = $0;
-                gsub(/<(\/?members)>/, "", MEMBER);
-              }
-              /<name>/ {
-                # 2. Extract and store the Metadata Type Name (remove tags)
-                TYPE = $0;
-                gsub(/<(\/?name)>/, "", TYPE);
+      #     # Use grep to find lines containing members and name tags.
+      #     # Then, use awk to process them in sequence and format the output.
+      #     cat ${{ inputs.SGD_PACKAGE_DIR }}/package/package.xml | \
+      #       grep -E 'members|name' | \
+      #       awk '
+      #         /<members>/ {
+      #           # 1. Extract and store the Member Name (remove tags)
+      #           MEMBER = $0;
+      #           gsub(/<(\/?members)>/, "", MEMBER);
+      #         }
+      #         /<name>/ {
+      #           # 2. Extract and store the Metadata Type Name (remove tags)
+      #           TYPE = $0;
+      #           gsub(/<(\/?name)>/, "", TYPE);
                 
-                # 3. Print the stored pair in the desired format
-                printf "%s : %s\n", TYPE, MEMBER;
-              }'
-          echo "--- END METADATA TO BE DEPLOYED ---"
+      #           # 3. Print the stored pair in the desired format
+      #           printf "%s : %s\n", TYPE, MEMBER;
+      #         }'
+      #     echo "--- END METADATA TO BE DEPLOYED ---"
 
       - name: 🔍 Geneate full Package
         if: inputs.DEPLOYMENT_SCOPE == 'FULL'
