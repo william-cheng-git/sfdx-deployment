@@ -61,11 +61,11 @@ jobs:
     steps:
       - name: Input validation
         run: |
-          if [ "${{ inputs.DEPLOYMENT_SCOPE }}" == "DELTA" && "${{ inputs.BASE_BRANCH_NAME }}" == "" ]; then
+          if [[ "${{ inputs.DEPLOYMENT_SCOPE }}" == "DELTA" && "${{ inputs.BASE_BRANCH_NAME }}" == "" ]]; then
             exit 1
           fi
 
-          if [ "${{ inputs.DEPLOYMENT_MODE }}" == "QUICK" && "${{ inputs.JOB_ID }}" == "" ]; then
+          if [[ "${{ inputs.DEPLOYMENT_MODE }}" == "QUICK" && "${{ inputs.JOB_ID }}" == "" ]]; then
             exit 1
           fi
             
