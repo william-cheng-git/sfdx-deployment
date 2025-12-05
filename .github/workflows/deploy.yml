@@ -72,6 +72,11 @@ jobs:
           # Install the sfdx-git-delta plugin
           echo "y" | sf plugins install sfdx-git-delta
 
+      - name: ⚙️ Checkout specified branch
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.BRANCH_NAME }}
+
       - name: Generate deployment package
         uses: ./.github/workflows/generate-deployment-package.yml
         with:
