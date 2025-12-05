@@ -75,7 +75,7 @@ jobs:
             exit 1
           fi
 
-          echo "SGD_IGNORE_FILE = ${{ env.SGD_IGNORE_FILE }}"
+          echo "SGD_IGNORE_FILE = ${{ inputs.SGD_IGNORE_FILE }}"
             
       - name: 📦 Setup Node.js
         uses: actions/setup-node@v4
