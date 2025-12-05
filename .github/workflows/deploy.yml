@@ -3,11 +3,6 @@ name: 🚀 Salesforce Deployment
 on:
   workflow_call:
     inputs:
-      VERSION:
-        description: The version of the github workflow / action
-        required: false
-        type: string
-        default: main
       BRANCH_NAME:
         description: The name of the branch to be deployed
         required: true
@@ -30,17 +25,14 @@ on:
       DEPLOYMENT_SCOPE:
         description: Deployment scope, expected values FULL | DELTA
         required: false
-        default: DELTA
         type: string
       DEPLOYMENT_MODE:
         description: Deployment mode, expected values DEPLOY | VALIDATE | QUICK
         required: false
-        default: DEPLOY
         type: string
       JOB_ID:
         description: Deployment Job Id, required if using quick deploy
         required: false
-        default: 0AfdL00000TErVBSA1
         type: string
       SGD_PACKAGE_DIR:
         description: SFDX git delta generated package directory
