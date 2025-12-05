@@ -86,7 +86,7 @@ jobs:
         shell: bash
 
       - name: Generate deployment package
-        uses: william-cheng-git/sfdx-deployment/.github/actions/generate-deployment-package@${{ steps.version_resolver.outputs.resolved_version }}
+        uses: "william-cheng-git/sfdx-deployment/.github/actions/generate-deployment-package@${{ steps.version_resolver.outputs.resolved_version }}"
         with:
             BRANCH_NAME: ${{ inputs.BRANCH_NAME }}
             BASE_BRANCH_NAME: ${{ inputs.BASE_BRANCH_NAME }}
