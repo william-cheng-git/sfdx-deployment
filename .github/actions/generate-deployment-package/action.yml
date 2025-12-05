@@ -39,7 +39,6 @@ runs:
       with:
         fetch-depth: 0
         ref: ${{ inputs.BRANCH_NAME }}
-      shell: bash
 
     - name: 🔍 Geneate Delta Package
       if: inputs.DEPLOYMENT_SCOPE == 'DELTA'
@@ -74,7 +73,6 @@ runs:
               printf "%s : %s\n", TYPE, MEMBER;
             }'
         echo "--- END METADATA TO BE DEPLOYED ---"
-      shell: bash
 
     - name: 🔍 Geneate full Package
       if: inputs.DEPLOYMENT_SCOPE == 'FULL'
