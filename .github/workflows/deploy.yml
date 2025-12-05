@@ -8,14 +8,14 @@ on:
         required: true
         type: string
       BASE_BRANCH_NAME:
-        required: true
+        required: false
         type: string
       TEST_LEVEL:
         description: Deployment Test Level, expected values NoTestRun | RunLocalTests | RunAllTestsInOrg | RunSpecifiedTests
         required: true
         type: string
       ENVIRONMENT:
-        description: Target deployment environment
+        description: Target deployment environment, the name of your github environment
         required: true
         type: string
       SF_USERNAME:
