@@ -39,6 +39,10 @@ on:
         required: false
         default: package
         type: string
+      SGD_IGNORE_FILE:
+        description: SFDX git delta ignore file
+        required: false
+        type: string
       SF_LOGIN_URL:
         description: Salesforce Login URL
         required: false
@@ -106,7 +110,7 @@ jobs:
           # Create the output directory before running the SGD command
           mkdir "${{ inputs.SGD_PACKAGE_DIR }}"
 
-          sf sgd source delta --from ${{ steps.baseBranch.outputs.sha }} --to ${{ inputs.BRANCH_NAME }} --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
+          sf sgd source delta --from ${{ steps.baseBranch.outputs.sha }} --to ${{ inputs.BRANCH_NAME }} --ignore-file "${{ inputs.SGD_IGNORE_FILE }}" --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
 
       # - name: 📋 Print Formatted Deployment List
       #   if: inputs.DEPLOYMENT_SCOPE == 'DELTA'
