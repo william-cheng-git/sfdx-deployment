@@ -72,73 +72,73 @@ jobs:
           # Install the sfdx-git-delta plugin
           echo "y" | sf plugins install sfdx-git-delta
 
-      # - name: Generate deployment package
-      #   uses: william-cheng-git/sfdx-deployment/.github/actions/generate-deployment-package.yml@96f53a12d85ad7b65ed9cd1e07c6942fcc15a330
-      #   with:
-      #       BRANCH_NAME: ${{ inputs.BRANCH_NAME }}
-      #       BASE_BRANCH_NAME: ${{ inputs.BASE_BRANCH_NAME }}
-      #       DEPLOYMENT_SCOPE: ${{ inputs.DEPLOYMENT_SCOPE }}
-      #       SGD_PACKAGE_DIR: ${{ inputs.SGD_PACKAGE_DIR }}
+      - name: Generate deployment package
+        uses: william-cheng-git/sfdx-deployment/.github/actions/generate-deployment-package@main
+        with:
+            BRANCH_NAME: ${{ inputs.BRANCH_NAME }}
+            BASE_BRANCH_NAME: ${{ inputs.BASE_BRANCH_NAME }}
+            DEPLOYMENT_SCOPE: ${{ inputs.DEPLOYMENT_SCOPE }}
+            SGD_PACKAGE_DIR: ${{ inputs.SGD_PACKAGE_DIR }}
       
-      - name: ⚙️ Checkout base branch
-        if: ${{ inputs.DEPLOYMENT_SCOPE == 'DELTA' && inputs.DEPLOYMENT_MODE != 'QUICK' }}
-        uses: actions/checkout@v6
-        with:
-          ref: ${{ inputs.BASE_BRANCH_NAME }}
+      # - name: ⚙️ Checkout base branch
+      #   if: ${{ inputs.DEPLOYMENT_SCOPE == 'DELTA' && inputs.DEPLOYMENT_MODE != 'QUICK' }}
+      #   uses: actions/checkout@v6
+      #   with:
+      #     ref: ${{ inputs.BASE_BRANCH_NAME }}
 
-      - name: ⚙️ Get base branch SHA
-        if: inputs.DEPLOYMENT_SCOPE == 'DELTA'
-        id: baseBranch
-        run: |
-          echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+      # - name: ⚙️ Get base branch SHA
+      #   if: inputs.DEPLOYMENT_SCOPE == 'DELTA'
+      #   id: baseBranch
+      #   run: |
+      #     echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
     
-      - name: ⚙️ Checkout specified branch
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-          ref: ${{ inputs.BRANCH_NAME }}
+      # - name: ⚙️ Checkout specified branch
+      #   uses: actions/checkout@v6
+      #   with:
+      #     fetch-depth: 0
+      #     ref: ${{ inputs.BRANCH_NAME }}
 
-      - name: 🔍 Geneate Delta Package
-        if: inputs.DEPLOYMENT_SCOPE == 'DELTA'
-        run: |
-          # Create the output directory before running the SGD command
-          mkdir "${{ inputs.SGD_PACKAGE_DIR }}"
+      # - name: 🔍 Geneate Delta Package
+      #   if: inputs.DEPLOYMENT_SCOPE == 'DELTA'
+      #   run: |
+      #     # Create the output directory before running the SGD command
+      #     mkdir "${{ inputs.SGD_PACKAGE_DIR }}"
 
-          sf sgd source delta --from ${{ steps.baseBranch.outputs.sha }} --to ${{ inputs.BRANCH_NAME }} --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
+      #     sf sgd source delta --from ${{ steps.baseBranch.outputs.sha }} --to ${{ inputs.BRANCH_NAME }} --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
 
-      - name: 📋 Print Formatted Deployment List
-        if: inputs.DEPLOYMENT_SCOPE == 'DELTA'
-        run: |
-          echo "--- START METADATA TO BE DEPLOYED ---"
+      # - name: 📋 Print Formatted Deployment List
+      #   if: inputs.DEPLOYMENT_SCOPE == 'DELTA'
+      #   run: |
+      #     echo "--- START METADATA TO BE DEPLOYED ---"
           
-          # Use grep to find lines containing members and name tags.
-          # Then, use awk to process them in sequence and format the output.
-          cat ${{ inputs.SGD_PACKAGE_DIR }}/package/package.xml | \
-            grep -E 'members|name' | \
-            awk '
-              /<members>/ {
-                # 1. Extract and store the Member Name (remove tags)
-                MEMBER = $0;
-                gsub(/<(\/?members)>/, "", MEMBER);
-              }
-              /<name>/ {
-                # 2. Extract and store the Metadata Type Name (remove tags)
-                TYPE = $0;
-                gsub(/<(\/?name)>/, "", TYPE);
+      #     # Use grep to find lines containing members and name tags.
+      #     # Then, use awk to process them in sequence and format the output.
+      #     cat ${{ inputs.SGD_PACKAGE_DIR }}/package/package.xml | \
+      #       grep -E 'members|name' | \
+      #       awk '
+      #         /<members>/ {
+      #           # 1. Extract and store the Member Name (remove tags)
+      #           MEMBER = $0;
+      #           gsub(/<(\/?members)>/, "", MEMBER);
+      #         }
+      #         /<name>/ {
+      #           # 2. Extract and store the Metadata Type Name (remove tags)
+      #           TYPE = $0;
+      #           gsub(/<(\/?name)>/, "", TYPE);
                 
-                # 3. Print the stored pair in the desired format
-                printf "%s : %s\n", TYPE, MEMBER;
-              }'
-          echo "--- END METADATA TO BE DEPLOYED ---"
+      #           # 3. Print the stored pair in the desired format
+      #           printf "%s : %s\n", TYPE, MEMBER;
+      #         }'
+      #     echo "--- END METADATA TO BE DEPLOYED ---"
 
-      - name: 🔍 Geneate full Package
-        if: inputs.DEPLOYMENT_SCOPE == 'FULL'
-        run: |
-          # Create the output directory before running the SGD command
-          mkdir "${{ inputs.SGD_PACKAGE_DIR }}"
+      # - name: 🔍 Geneate full Package
+      #   if: inputs.DEPLOYMENT_SCOPE == 'FULL'
+      #   run: |
+      #     # Create the output directory before running the SGD command
+      #     mkdir "${{ inputs.SGD_PACKAGE_DIR }}"
 
-          # 4b825dc642cb6eb9a060e54bf8d69288fbee4904 is Empty Tree SHA
-          sf sgd source delta --from 4b825dc642cb6eb9a060e54bf8d69288fbee4904 --to ${{ inputs.BRANCH_NAME }} --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
+      #     # 4b825dc642cb6eb9a060e54bf8d69288fbee4904 is Empty Tree SHA
+      #     sf sgd source delta --from 4b825dc642cb6eb9a060e54bf8d69288fbee4904 --to ${{ inputs.BRANCH_NAME }} --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
 
       - name: 🔒 Authenticate to Salesforce Org
         run: |
