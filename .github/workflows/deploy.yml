@@ -74,8 +74,6 @@ jobs:
             echo "JOB_ID is required when DEPLOYMENT_MODE = QUICK"
             exit 1
           fi
-
-          echo "SGD_IGNORE_FILE = ${{ inputs.SGD_IGNORE_FILE }}"
             
       - name: 📦 Setup Node.js
         uses: actions/setup-node@v4
@@ -112,7 +110,11 @@ jobs:
           # Create the output directory before running the SGD command
           mkdir "${{ inputs.SGD_PACKAGE_DIR }}"
 
-          sf sgd source delta --from ${{ steps.baseBranch.outputs.sha }} --to ${{ inputs.BRANCH_NAME }} --ignore-file "${{ inputs.SGD_IGNORE_FILE }}" --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
+          if [ "${{ inputs.SGD_IGNORE_FILE }}" != "" ]; then
+            SGD_IGNORE_ARG="--ignore-file \"${{ inputs.SGD_IGNORE_FILE }}\""
+          fi
+
+          sf sgd source delta --from ${{ steps.baseBranch.outputs.sha }} --to ${{ inputs.BRANCH_NAME }} $SGD_IGNORE_ARG --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
 
       # - name: 📋 Print Formatted Deployment List
       #   if: inputs.DEPLOYMENT_SCOPE == 'DELTA'
