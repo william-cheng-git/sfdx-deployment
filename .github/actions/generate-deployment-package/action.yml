@@ -30,9 +30,9 @@ runs:
     - name: ⚙️ Get base branch SHA
       if: inputs.DEPLOYMENT_SCOPE == 'DELTA'
       id: baseBranch
+      shell: bash
       run: |
         echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-      shell: bash
   
     - name: ⚙️ Checkout specified branch
       uses: actions/checkout@v6
@@ -42,15 +42,16 @@ runs:
 
     - name: 🔍 Geneate Delta Package
       if: inputs.DEPLOYMENT_SCOPE == 'DELTA'
+      shell: bash
       run: |
         # Create the output directory before running the SGD command
         mkdir "${{ inputs.SGD_PACKAGE_DIR }}"
 
         sf sgd source delta --from ${{ steps.baseBranch.outputs.sha }} --to ${{ inputs.BRANCH_NAME }} --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
-      shell: bash
 
     - name: 📋 Print Formatted Deployment List
       if: inputs.DEPLOYMENT_SCOPE == 'DELTA'
+      shell: bash
       run: |
         echo "--- START METADATA TO BE DEPLOYED ---"
         
