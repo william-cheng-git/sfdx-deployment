@@ -77,10 +77,16 @@ jobs:
           npm install -g @salesforce/cli
           # Install the sfdx-git-delta plugin
           echo "y" | sf plugins install sfdx-git-delta
-          echo "version = ${{ inputs.VERSION }}"
+
+      - name: Resolve Action Version
+        id: version_resolver
+        run: |
+          # The result of this echo is stored in the step output 'resolved_version'
+          echo "resolved_version=${{ inputs.VERSION }}" >> $GITHUB_OUTPUT
+        shell: bash
 
       - name: Generate deployment package
-        uses: william-cheng-git/sfdx-deployment/.github/actions/generate-deployment-package@main
+        uses: william-cheng-git/sfdx-deployment/.github/actions/generate-deployment-package@${{ steps.version_resolver.outputs.resolved_version }}
         with:
             BRANCH_NAME: ${{ inputs.BRANCH_NAME }}
             BASE_BRANCH_NAME: ${{ inputs.BASE_BRANCH_NAME }}
