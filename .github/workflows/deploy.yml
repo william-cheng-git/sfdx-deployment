@@ -77,9 +77,10 @@ jobs:
           npm install -g @salesforce/cli
           # Install the sfdx-git-delta plugin
           echo "y" | sf plugins install sfdx-git-delta
+          echo "version = ${{ inputs.VERSION }}"
 
       - name: Generate deployment package
-        uses: william-cheng-git/sfdx-deployment/.github/actions/generate-deployment-package@${{ inputs.VERSION }}
+        uses: william-cheng-git/sfdx-deployment/.github/actions/generate-deployment-package@main
         with:
             BRANCH_NAME: ${{ inputs.BRANCH_NAME }}
             BASE_BRANCH_NAME: ${{ inputs.BASE_BRANCH_NAME }}
