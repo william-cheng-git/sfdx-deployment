@@ -144,7 +144,7 @@ jobs:
           mkdir "${{ inputs.SGD_PACKAGE_DIR }}"
 
           if [ "${{ vars.SGD_IGNORE_FILE }}" != "" ]; then
-            SGD_IGNORE_ARG="--ignore-file ${{ inputs.SGD_IGNORE_FILE }}"
+            SGD_IGNORE_ARG="--ignore-file ${{ vars.SGD_IGNORE_FILE }}"
           fi
 
           # 4b825dc642cb6eb9a060e54bf8d69288fbee4904 is Empty Tree SHA
