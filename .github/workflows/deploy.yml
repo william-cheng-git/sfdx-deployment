@@ -58,7 +58,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: deployment-runner
+    runs-on: ubuntu-latest
 
     environment: ${{inputs.ENVIRONMENT}}
     
