@@ -74,6 +74,9 @@ jobs:
             echo "JOB_ID is required when DEPLOYMENT_MODE = QUICK"
             exit 1
           fi
+
+          echo "vars.SGD_IGNORE_FILE = ${{ vars.SGD_IGNORE_FILE }}"
+          echo "inputs.SGD_PACKAGE_DIR = ${{ inputs.SGD_PACKAGE_DIR }}"
  
       - name: ⚙️ Checkout base branch
         if: ${{ inputs.DEPLOYMENT_SCOPE == 'DELTA' && inputs.DEPLOYMENT_MODE != 'QUICK' }}
