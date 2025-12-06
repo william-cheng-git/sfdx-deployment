@@ -57,8 +57,23 @@ on:
         required: true
 
 jobs:
-  deploy:
+  build-image:
     runs-on: ubuntu-latest
+    snapshot: deployment-runner
+    steps:
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24" # Use a recent stable Node.js version
+
+      - name: 💾 Install Salesforce CLI and Plugins
+        run: |
+          npm install -g @salesforce/cli
+          # Install the sfdx-git-delta plugin
+          echo "y" | sf plugins install sfdx-git-delta
+      
+  deploy:
+    runs-on: deployment-runner
 
     environment: ${{inputs.ENVIRONMENT}}
     
@@ -74,17 +89,6 @@ jobs:
             echo "JOB_ID is required when DEPLOYMENT_MODE = QUICK"
             exit 1
           fi
-            
-      - name: 📦 Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "24" # Use a recent stable Node.js version
-
-      - name: 💾 Install Salesforce CLI and Plugins
-        run: |
-          npm install -g @salesforce/cli
-          # Install the sfdx-git-delta plugin
-          echo "y" | sf plugins install sfdx-git-delta
       
       - name: ⚙️ Checkout base branch
         if: ${{ inputs.DEPLOYMENT_SCOPE == 'DELTA' && inputs.DEPLOYMENT_MODE != 'QUICK' }}
