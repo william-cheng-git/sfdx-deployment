@@ -210,3 +210,12 @@ jobs:
           #   echo "Deployment failed. Check the full report above."
           #   exit 1
           # fi
+
+  cancel:
+    if: cancelled()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: cancel-deployment
+        run: |
+          echo "Cancellation"
