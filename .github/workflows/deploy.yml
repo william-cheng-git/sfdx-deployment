@@ -160,6 +160,7 @@ jobs:
             --alias deployment-target
 
       - name: ✨ Deploy Metadata
+        id: deployMetadata
         run: |
           export Environment=${{inputs.ENVIRONMENT}}
           eval $(jq -r 'keys[] as $key | "export \($key)=\(.[$key])"' "config/env/${{inputs.ENVIRONMENT}}.json")
@@ -187,6 +188,8 @@ jobs:
 
           DEPLOY_ID=$(echo $DEPLOYMENT_RESULT | jq -r '.result.id')
 
+          echo "deployId=$DEPLOYID" >> $GITHUB_OUTPUT
+
           echo "Deployment started with ID: $DEPLOY_ID"
 
           sf project deploy report \
@@ -211,6 +214,7 @@ jobs:
           # fi
 
       - name: Cancel running sf deployment if there are any
-        if: cancelled()
+        if: ${{ cancelled() && steps.deployMetadata.output.deployId != '' }}
         run: |
-          echo "cancellation"
+          echo "Cancelling deployment Id = ${{ steps.deployMetadata.output.deployId }}"
+          sf project deploy cancel --job-id ${{ steps.deployMetadata.output.deployId }}
