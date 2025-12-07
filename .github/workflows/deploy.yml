@@ -256,11 +256,16 @@ jobs:
           # fi
 
   cancel:
-    needs: [deploy, setup]
+    needs: [setup]
     # if: cancelled()
     runs-on: ubuntu-latest
 
     steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
       - name: Get npm cache directory
         id: npm-cache-dir
         run: echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
@@ -274,6 +279,10 @@ jobs:
           key: ${{ runner.os }}-npm-sfcli-v1 # Must use the exact same key as the first job
           restore-keys: |
             ${{ runner.os }}-npm-sfcli-
+
+      - name: Add SF CLI to PATH (Crucial)
+        # Add the location where the global npm package was installed in Job 1 to the PATH
+        run: echo "${{ needs.setup_and_cache.outputs.sfcli_bin_path }}" >> $GITHUB_PATH
 
       - name: 🔒 Authenticate to Salesforce Org
         run: |
