@@ -78,6 +78,11 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
 
+      - name: List the state of node modules
+        run: |
+          npm -v
+          sf help
+
 
         
   test-cache:
