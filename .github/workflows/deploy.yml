@@ -55,7 +55,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     environment: ${{inputs.ENVIRONMENT}}
     
     steps:
@@ -215,6 +214,8 @@ jobs:
   cancel:
     needs: deploy
     runs-on: ubuntu-latest
+    environment: ${{inputs.ENVIRONMENT}}
+    
     steps:
       - name: ⚙️ Checkout specified branch
         uses: actions/checkout@v6
