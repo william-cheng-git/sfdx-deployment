@@ -56,6 +56,9 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+
       - name: 📦 Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -79,8 +82,6 @@ jobs:
       # Run the install command only if the cache was missed
       - name: Install SF CLI (Only if cache miss)
         if: steps.cache-npm.outputs.cache-hit != 'true'
-        run: |
-      - name: 💾 Install Salesforce CLI and Plugins
         run: |
           npm install -g @salesforce/cli
           # Install the sfdx-git-delta plugin
@@ -264,7 +265,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           
       - name: Get npm cache directory
         id: npm-cache-dir
