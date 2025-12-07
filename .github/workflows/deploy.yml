@@ -53,7 +53,6 @@ on:
         required: true
 
 jobs:
-
   setup:
     runs-on: ubuntu-latest
     steps:
@@ -97,6 +96,7 @@ jobs:
       sfcli_bin_path: ${{ steps.sfcli_path.outputs.path }}
     
   deploy:
+    needs: setup
     runs-on: ubuntu-latest
 
     environment: ${{inputs.ENVIRONMENT}}
@@ -256,7 +256,7 @@ jobs:
 
   cancel:
     needs: [deploy, setup]
-    if: cancelled()
+    # if: cancelled()
     runs-on: ubuntu-latest
 
     steps:
