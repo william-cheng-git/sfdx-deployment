@@ -71,13 +71,13 @@ jobs:
           fi
  
       - name: ⚙️ Checkout base branch
-        if: ${{ inputs.DEPLOYMENT_SCOPE == 'DELTA' && inputs.DEPLOYMENT_MODE != 'QUICK' }}
+        if: ${{ (inputs.DEPLOYMENT_SCOPE == 'DELTA' || inputs.DEPLOYMENT_SCOPE == 'ROLLBACK') && inputs.DEPLOYMENT_MODE != 'QUICK' }}
         uses: actions/checkout@v6
         with:
           ref: ${{ inputs.BASE_BRANCH_NAME }}
 
       - name: ⚙️ Get base branch SHA
-        if: ${{ inputs.DEPLOYMENT_SCOPE == 'DELTA' && inputs.DEPLOYMENT_MODE != 'QUICK' }}
+        if: ${{ (inputs.DEPLOYMENT_SCOPE == 'DELTA' || inputs.DEPLOYMENT_SCOPE == 'ROLLBACK') && inputs.DEPLOYMENT_MODE != 'QUICK' }}
         id: baseBranch
         run: |
           echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
