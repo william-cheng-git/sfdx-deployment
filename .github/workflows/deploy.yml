@@ -204,11 +204,13 @@ jobs:
 
           echo "Deployment started with ID: $DEPLOY_ID"
 
+          # Print human readable result
           sf project deploy report \
             --target-org deployment-target \
             --job-id $DEPLOY_ID \
             --wait 1 # This flag handles the polling wait time itself
 
+          # Get json result
           REPORT_RESULT=$(sf project deploy report \
             --target-org deployment-target \
             --job-id $DEPLOY_ID \
@@ -216,7 +218,7 @@ jobs:
 
           # Extract final status
           STATUS=$(echo $REPORT_RESULT | jq -r '.result.status')
-          echo "Final Status: $STATUS"
+          echo "Deployment Status: $STATUS"
 
           # Check final status and fail the job if deployment failed
           if [ "$STATUS" != "Succeeded" ]; then
