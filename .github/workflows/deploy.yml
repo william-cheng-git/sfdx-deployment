@@ -208,10 +208,10 @@ jobs:
             echo "Polling deployment status of $DEPLOY_ID"
             
             # Print human readable result
-            sf project deploy report \
-              --target-org deployment-target \
-              --job-id $DEPLOY_ID \
-              --wait 1 # This flag handles the polling wait time itself
+            # sf project deploy report \
+            #   --target-org deployment-target \
+            #   --job-id $DEPLOY_ID \
+            #   --wait 1 # This flag handles the polling wait time itself
   
             # Get json result
             REPORT_RESULT=$(sf project deploy report \
@@ -221,6 +221,8 @@ jobs:
   
             # Extract final status
             DEPLOYMENT_STATUS=$(echo $REPORT_RESULT | jq -r '.result.status')
+            
+            echo "Deployment Status: $DEPLOYMENT_STATUS"
   
             # Check final status and fail the job if deployment failed
             if [ "$DEPLOYMENT_STATUS" == "Failed" ]; then
@@ -235,7 +237,6 @@ jobs:
             fi
           done
 
-          echo "Deployment Status: $DEPLOYMENT_STATUS"
 
       - name: Cancel running sf deployment if there are any
         if: ${{ cancelled() && steps.deployMetadata.outputs.deployId != '' }}
