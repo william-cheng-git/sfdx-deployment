@@ -200,7 +200,7 @@ jobs:
 
           DEPLOY_ID=$(echo $DEPLOYMENT_RESULT | jq -r '.result.id')
 
-          echo "deployId=$DEPLOYID" >> $GITHUB_OUTPUT
+          echo "deployId=$DEPLOY_ID" >> $GITHUB_OUTPUT
 
           echo "Deployment started with ID: $DEPLOY_ID"
 
