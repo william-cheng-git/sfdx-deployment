@@ -213,6 +213,7 @@ jobs:
 
   cancel:
     if: cancelled()
+    needs: deploy
     runs-on: ubuntu-latest
 
     steps:
