@@ -226,7 +226,7 @@ jobs:
           # fi
 
       - name: Cancel running sf deployment if there are any
-        if: ${{ cancelled() || true }}
+        if: ${{ cancelled() && "${{ steps.deployMetadata.outputs.deployId }}" != "" }}
         run: |
-          echo "Cancelling deployment Id = ${{ steps.deployMetadata.outputs.deployId }}"
+          echo "Attempts to cancel deployment Id = ${{ steps.deployMetadata.outputs.deployId }}"
           sf project deploy cancel --job-id ${{ steps.deployMetadata.outputs.deployId }}
