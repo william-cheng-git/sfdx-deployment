@@ -58,12 +58,6 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: 💾 Install Salesforce CLI and Plugins
-        run: |
-          npm install -g @salesforce/cli
-          # Install the sfdx-git-delta plugin
-          echo "y" | sf plugins install sfdx-git-delta
-
       - name: Cache node modules
         id: cache-npm
         uses: actions/cache@v4
@@ -78,12 +72,11 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
 
-      - name: List the state of node modules
+      - name: 💾 Install Salesforce CLI and Plugins
         run: |
-          npm -v
-          sf help
-
-
+          npm install -g @salesforce/cli
+          # Install the sfdx-git-delta plugin
+          echo "y" | sf plugins install sfdx-git-delta
         
   test-cache:
     needs: setup
