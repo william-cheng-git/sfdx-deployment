@@ -53,6 +53,49 @@ on:
         required: true
 
 jobs:
+
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24" # Use a recent stable Node.js version
+
+      - name: Get npm cache directory
+        id: npm-cache-dir
+        run: echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
+
+      - name: Cache Node Modules & SF CLI (Key)
+        uses: actions/cache@v4
+        id: cache-npm
+        with:
+          # Caches the location where global npm packages (like sf cli) are stored
+          path: |
+            ~/.npm
+            ${{ steps.npm-cache-dir.outputs.dir }}
+          # Generates a unique key based on the runner OS
+          key: ${{ runner.os }}-npm-sfcli-v1 # Use a static key if the SF CLI version is fixed
+
+      # Run the install command only if the cache was missed
+      - name: Install SF CLI (Only if cache miss)
+        if: steps.cache-npm.outputs.cache-hit != 'true'
+        run: |
+      - name: 💾 Install Salesforce CLI and Plugins
+        run: |
+          npm install -g @salesforce/cli
+          # Install the sfdx-git-delta plugin
+          echo "y" | sf plugins install sfdx-git-delta
+          
+      - name: Save SF CLI Installation Location (for later jobs)
+        # Store the path to the global SF CLI executable location in a job output
+        id: sfcli_path
+        run: echo "path=$(npm prefix -g)/bin" >> $GITHUB_OUTPUT
+    
+    # CRITICAL: Define the output for the next job to use
+    outputs:
+      sfcli_bin_path: ${{ steps.sfcli_path.outputs.path }}
+    
   deploy:
     runs-on: ubuntu-latest
 
@@ -212,11 +255,25 @@ jobs:
           # fi
 
   cancel:
+    needs: [deploy, setup]
     if: cancelled()
-    needs: deploy
     runs-on: ubuntu-latest
 
     steps:
+      - name: Get npm cache directory
+        id: npm-cache-dir
+        run: echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
+
+      - name: Restore SF CLI Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm
+            ${{ steps.npm-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-npm-sfcli-v1 # Must use the exact same key as the first job
+          restore-keys: |
+            ${{ runner.os }}-npm-sfcli-
+
       - name: 🔒 Authenticate to Salesforce Org
         run: |
           echo "${{ secrets.SF_SERVER_KEY }}" > server.key
