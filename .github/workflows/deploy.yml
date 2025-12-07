@@ -56,45 +56,26 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v5
 
-      - name: 📦 Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "24" # Use a recent stable Node.js version
-
-      - name: Get npm cache directory
-        id: npm-cache-dir
-        run: echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
-
-      - name: Cache Node Modules & SF CLI (Key)
-        uses: actions/cache@v4
+      - name: Cache node modules
         id: cache-npm
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-node-modules
         with:
-          # Caches the location where global npm packages (like sf cli) are stored
-          path: |
-            ~/.npm
-            ${{ steps.npm-cache-dir.outputs.dir }}
-          # Generates a unique key based on the runner OS
-          key: ${{ runner.os }}-npm-sfcli-v1 # Use a static key if the SF CLI version is fixed
+          # npm cache files are stored in `~/.npm` on Linux/macOS
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
 
-      # Run the install command only if the cache was missed
-      - name: Install SF CLI (Only if cache miss)
-        if: steps.cache-npm.outputs.cache-hit != 'true'
-        run: |
-          npm install -g @salesforce/cli
-          # Install the sfdx-git-delta plugin
-          echo "y" | sf plugins install sfdx-git-delta
-          
-      - name: Save SF CLI Installation Location (for later jobs)
-        # Store the path to the global SF CLI executable location in a job output
-        id: sfcli_path
-        run: echo "path=$(npm prefix -g)/bin" >> $GITHUB_OUTPUT
-    
-    # CRITICAL: Define the output for the next job to use
-    outputs:
-      sfcli_bin_path: ${{ steps.sfcli_path.outputs.path }}
+      - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
+        name: List the state of node modules
+        continue-on-error: true
+        run: npm -v
     
   deploy:
     needs: setup
@@ -256,41 +237,41 @@ jobs:
           #   exit 1
           # fi
 
-  cancel:
-    needs: [setup]
-    # if: cancelled()
-    runs-on: ubuntu-latest
+  # cancel:
+  #   needs: [setup]
+  #   # if: cancelled()
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
+  #   steps:
+  #     - name: Setup Node.js
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: '24'
           
-      - name: Get npm cache directory
-        id: npm-cache-dir
-        run: echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
+  #     - name: Get npm cache directory
+  #       id: npm-cache-dir
+  #       run: echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
 
-      - name: Restore SF CLI Cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.npm
-            ${{ steps.npm-cache-dir.outputs.dir }}
-          key: ${{ runner.os }}-npm-sfcli-v1 # Must use the exact same key as the first job
-          restore-keys: |
-            ${{ runner.os }}-npm-sfcli-
+  #     - name: Restore SF CLI Cache
+  #       uses: actions/cache@v4
+  #       with:
+  #         path: |
+  #           ~/.npm
+  #           ${{ steps.npm-cache-dir.outputs.dir }}
+  #         key: ${{ runner.os }}-npm-sfcli-v1 # Must use the exact same key as the first job
+  #         restore-keys: |
+  #           ${{ runner.os }}-npm-sfcli-
 
-      - name: Add SF CLI to PATH (Crucial)
-        # Add the location where the global npm package was installed in Job 1 to the PATH
-        run: echo "${{ needs.setup_and_cache.outputs.sfcli_bin_path }}" >> $GITHUB_PATH
+  #     - name: Add SF CLI to PATH (Crucial)
+  #       # Add the location where the global npm package was installed in Job 1 to the PATH
+  #       run: echo "${{ needs.setup_and_cache.outputs.sfcli_bin_path }}" >> $GITHUB_PATH
 
-      - name: 🔒 Authenticate to Salesforce Org
-        run: |
-          echo "${{ secrets.SF_SERVER_KEY }}" > server.key
-          sf org login jwt --client-id "${{ secrets.SF_CONSUMER_KEY }}" \
-            --jwt-key-file server.key \
-            --username "${{ inputs.SF_USERNAME }}" \
-            --instance-url "${{ inputs.SF_LOGIN_URL }}" \
-            --set-default-dev-hub \
-            --alias deployment-target
+  #     - name: 🔒 Authenticate to Salesforce Org
+  #       run: |
+  #         echo "${{ secrets.SF_SERVER_KEY }}" > server.key
+  #         sf org login jwt --client-id "${{ secrets.SF_CONSUMER_KEY }}" \
+  #           --jwt-key-file server.key \
+  #           --username "${{ inputs.SF_USERNAME }}" \
+  #           --instance-url "${{ inputs.SF_LOGIN_URL }}" \
+  #           --set-default-dev-hub \
+  #           --alias deployment-target
