@@ -23,7 +23,7 @@ on:
         required: true
         type: string
       DEPLOYMENT_SCOPE:
-        description: Deployment scope, expected values FULL | DELTA
+        description: Deployment scope, expected values FULL | DELTA | ROLLBACK
         required: false
         type: string
       DEPLOYMENT_MODE:
@@ -110,6 +110,18 @@ jobs:
           fi
 
           sf sgd source delta --from ${{ steps.baseBranch.outputs.sha }} --to ${{ inputs.BRANCH_NAME }} $SGD_IGNORE_ARG --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
+
+      - name: 🔍 Geneate Rollback Package
+        if: inputs.DEPLOYMENT_SCOPE == 'ROLLBACK'
+        run: |
+          # Create the output directory before running the SGD command
+          mkdir "${{ inputs.SGD_PACKAGE_DIR }}"
+
+          if [ "${{ vars.SGD_IGNORE_FILE }}" != "" ]; then
+            SGD_IGNORE_ARG="--ignore-file ${{ vars.SGD_IGNORE_FILE }}"
+          fi
+
+          sf sgd source delta --from ${{ inputs.BRANCH_NAME }} --to ${{ steps.baseBranch.outputs.sha }} $SGD_IGNORE_ARG --output-dir "${{ inputs.SGD_PACKAGE_DIR }}"
 
       # - name: 📋 Print Formatted Deployment List
       #   if: inputs.DEPLOYMENT_SCOPE == 'DELTA'
