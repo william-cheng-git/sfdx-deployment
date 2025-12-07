@@ -222,7 +222,6 @@ jobs:
             # Extract final status
             DEPLOYMENT_STATUS=$(echo $REPORT_RESULT | jq -r '.result.status')
             
-            echo "Deployment Status: $DEPLOYMENT_STATUS"
   
             # Check final status and fail the job if deployment failed
             if [ "$DEPLOYMENT_STATUS" == "Failed" ]; then
@@ -236,6 +235,7 @@ jobs:
               exit 1
             fi
           done
+          echo "Deployment Status: $DEPLOYMENT_STATUS"
 
 
       - name: Cancel running sf deployment if there are any
