@@ -204,14 +204,14 @@ jobs:
 
           echo "Deployment started with ID: $DEPLOY_ID"
 
-          while [ "$DEPLOY_STATUS" != "Succeeded" ] && [ "$DEPLOY_STATUS" != "Failed" ] && [ "$DEPLOY_STATUS" != "Canceled" ]; do
+          while [ "$DEPLOYMENT_STATUS" != "Succeeded" ] && [ "$DEPLOYMENT_STATUS" != "Failed" ] && [ "$DEPLOYMENT_STATUS" != "Canceled" ]; do
             echo "Polling deployment status of $DEPLOY_ID"
             
             # Print human readable result
-            # sf project deploy report \
-            #   --target-org deployment-target \
-            #   --job-id $DEPLOY_ID \
-            #   --wait 1 # This flag handles the polling wait time itself
+            sf project deploy report \
+              --target-org deployment-target \
+              --job-id $DEPLOY_ID \
+              --wait 1 # This flag handles the polling wait time itself
   
             # Get json result
             REPORT_RESULT=$(sf project deploy report \
