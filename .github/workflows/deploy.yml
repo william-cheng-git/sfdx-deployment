@@ -210,9 +210,6 @@ jobs:
           #   echo "Deployment failed. Check the full report above."
           #   exit 1
           # fi
-      - name: cancel
-        run: |
-          echo "Cancellation"
 
   cancel:
     if: cancelled()
@@ -220,6 +217,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: cancel-deployment
+      - name: 🔒 Authenticate to Salesforce Org
         run: |
-          echo "Cancellation"
+          echo "${{ secrets.SF_SERVER_KEY }}" > server.key
+          sf org login jwt --client-id "${{ secrets.SF_CONSUMER_KEY }}" \
+            --jwt-key-file server.key \
+            --username "${{ inputs.SF_USERNAME }}" \
+            --instance-url "${{ inputs.SF_LOGIN_URL }}" \
+            --set-default-dev-hub \
+            --alias deployment-target
