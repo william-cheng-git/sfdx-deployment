@@ -11,7 +11,7 @@ on:
         required: false
         type: string
       TEST_LEVEL:
-        description: Deployment Test Level, expected values NoTestRun | RunLocalTests | RunAllTestsInOrg | RunSpecifiedTests
+        description: Deployment Test Level, expected values NoTestRun | RunLocalTests | RunAllTestsInOrg | RunSpecifiedTests | ChangedTests
         required: true
         type: string
       ENVIRONMENT:
@@ -149,7 +149,7 @@ jobs:
       #     echo "--- END METADATA TO BE DEPLOYED ---"
 
       - name: Generate changed test list
-        if: inputs.TEST_LEVEL = 'CHANGEDTEST'
+        if: inputs.TEST_LEVEL = 'ChangedTests'
         run: |
           echo xq . < package/package.xml | jq '.Package.types | [.] | flatten | map(select(.name=="ApexClass")) | .[] | .members | [.] | flatten | map(select(. | index("*") | not)) | unique | join(",")'
 
