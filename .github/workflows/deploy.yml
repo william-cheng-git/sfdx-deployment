@@ -151,8 +151,8 @@ jobs:
       - name: Generate changed test list
         if: inputs.TEST_LEVEL == 'ChangedTests'
         run: |
-          # echo xq . < ${{ inputs.SGD_PACKAGE_DIR }}/package/package.xml | jq '.Package.types | [.] | flatten | map(select(.name=="ApexClass")) | .[] | .members | [.] | flatten | map(select(. | index("*") | not)) | unique | join(",")'
-          echo xq . < ${{ inputs.SGD_PACKAGE_DIR }}/package/package.xml
+          echo xq . < ${{ inputs.SGD_PACKAGE_DIR }}/package/package.xml | jq '.Package.types | [.] | flatten | map(select(.name=="ApexClass")) | .[] | .members | [.] | flatten | map(select(. | index("*") | not)) | unique | join(",")'
+          # echo xq . < ${{ inputs.SGD_PACKAGE_DIR }}/package/package.xml
           
       - name: 🔍 Geneate full Package
         if: inputs.DEPLOYMENT_SCOPE == 'FULL'
