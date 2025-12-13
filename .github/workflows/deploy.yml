@@ -148,6 +148,11 @@ jobs:
       #         }'
       #     echo "--- END METADATA TO BE DEPLOYED ---"
 
+      - name: Generate changed test list
+        if: inputs.TEST_LEVEL = 'CHANGEDTEST'
+        run: |
+          echo xq . < package/package.xml | jq '.Package.types | [.] | flatten | map(select(.name=="ApexClass")) | .[] | .members | [.] | flatten | map(select(. | index("*") | not)) | unique | join(",")'
+
       - name: 🔍 Geneate full Package
         if: inputs.DEPLOYMENT_SCOPE == 'FULL'
         run: |
